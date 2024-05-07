@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  reverse-proxy:
+    image: traefik:2.6.0
+    container_name: traefik
+    restart: unless-stopped
+    environment:
+       TRAEFIK_CERTIFICATESRESOLVERS_LETSENCRYPT_ACME_EMAIL: ${USER_EMAIL}
+    ports:
+      - 80:80
+      - 443:443
+      - 8080:8080
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik.yml:/traefik.yml:ro
+      - letsencrypt:/letsencrypt
+      - ./configurations:/configurations
+
+volumes:
+  letsencrypt:
